@@ -1,0 +1,17 @@
+= mara's blog
+mara <mara@localhost.local>
+:toc:
+:numbered:
+:nofooter:
+:source-highlighter: pygments
+
+== Presentation
+
+Welcome, I'm mara, during my spare time, I'm contributing to develop
+intros/demos for the Flush group.
+You can find some https://flush.team[Flush] information on the https://flush.team[offical website] or on https://demozoo.org/groups/41823/[demozoo] or https://www.pouet.net/groups.php?which=12080[pouet] and our https://www.youtube.com/channel/UCHHiTAx0hdEVxxUqJZ-3yIw[youtube channel]
+
+== Crackmes.one's solutions
+
+- link:crackmes.one/destructeur/ShAPK1/solution.html[Solution for destructeur’s ShAPK1]
+- link:crackmes.one/nutcake/WhiteRabbit/solution.html[Solution for nutcake’s WhiteRabbit]
