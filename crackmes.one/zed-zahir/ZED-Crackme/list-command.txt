@@ -1,0 +1,25 @@
+    1  cd home
+    2  ls
+    3  ./ZED-Crackme-x64.bin 
+    4  nm ZED-Crackme-x64.bin 
+    6  apt update
+    7  apt install build-essential
+    8  ./ZED-Crackme-x64.bin 
+   10  apt install file
+   11  file ZED-Crackme-x64.bin 
+   13  nm ZED-Crackme-x64.bin 
+   14  ./ZED-Crackme-x64.bin 
+   15  strings ZED-Crackme-x64.bin 
+   16  apt install upx
+   17  upx -d ZED-Crackme-x64.bin 
+   18  strings ZED-Crackme-x64.bin 
+   19  ./ZED-Crackme-x64.bin 
+   22  apt install vim
+   23  vim m.c
+   24  gcc -shared -fPIC m.c -o m.so
+   25  LD_PRELOAD=m.so ./ZED-Crackme-x64.bin 
+   26  LD_PRELOAD=./m.so ./ZED-Crackme-x64.bin 
+   27  LD_PRELOAD=./m.so ./ZED-Crackme-x64.bin 2>&1 > lala.txt
+   28  vi lala.txt 
+   29  cat 02_cool.txt 
+   30  history > list-command.txt

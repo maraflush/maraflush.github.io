@@ -1,0 +1,8 @@
+***********************
+**      rules:       **
+***********************
+
+* do not bruteforce
+* do not patch, find instead the serial.
+
+enter the passphrase: you succeed!!

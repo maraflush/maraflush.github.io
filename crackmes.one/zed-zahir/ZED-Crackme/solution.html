@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="mara">
-<title>mara&#8217;s blog</title>
+<title>Solution for zed-zahir&#8217;s ZED-Crackme</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>mara&#8217;s blog</h1>
+<h1>Solution for zed-zahir&#8217;s ZED-Crackme</h1>
 <div class="details">
 <span id="author" class="author">mara</span><br>
 <span id="email" class="email"><a href="mailto:mara@localhost.local">mara@localhost.local</a></span><br>
@@ -447,40 +447,360 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_presentation">1. Presentation</a></li>
-<li><a href="#_crackmes_ones_solutions">2. Crackmes.one&#8217;s solutions</a></li>
+<li><a href="#_analysis">1. Analysis</a></li>
+<li><a href="#_references">References</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_presentation">1. Presentation</h2>
+<h2 id="_analysis">1. Analysis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Welcome, I&#8217;m mara, during my spare time, I&#8217;m contributing to develop
-intros/demos for the Flush group.
-You can find some <a href="https://flush.team">Flush</a> information on the <a href="https://flush.team">offical website</a> or on <a href="https://demozoo.org/groups/41823/">demozoo</a> or <a href="https://www.pouet.net/groups.php?which=12080">pouet</a> and our <a href="https://www.youtube.com/channel/UCHHiTAx0hdEVxxUqJZ-3yIw">youtube channel</a></p>
+<p>Before all, unpack the binary via <strong><a href="#upx">[upx]</a></strong>.</p>
+</div>
+<div id="source" class="listingblock">
+<div class="content">
+<pre>$ upx -d ZED-Crackme-x64.bin</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The goal will find the good serial.</p>
+</div>
+<div class="paragraph">
+<p>Take Cutter <a href="#cutter">[cutter]</a>, to analyze the binary.</p>
+</div>
+<div class="paragraph">
+<p>Don&#8217;t forget, use <strong>aaa</strong> option to disassemble the crackme.
+The entry point with Cutter is named by a <em>flag</em> <strong>entry0</strong></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+a flag is a litteral or a identifier in a Cutter jargon
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>  ;-- section..text:
+  ;-- .text:
+  ;-- _start:
+42: entry0 (int64_t arg3);
+; arg int64_t arg3 @ rdx
+0x000008c0      xor     ebp, ebp   ; [14] -r-x section size 3410 named .text
+0x000008c2      mov     r9, rdx    ; arg3
+0x000008c5      pop     rsi
+0x000008c6      mov     rdx, rsp
+0x000008c9      and     rsp, 0xfffffffffffffff0
+0x000008cd      push    rax
+0x000008ce      push    rsp
+0x000008cf      lea     r8, [sym.__libc_csu_fini] ; 0x1610
+0x000008d6      lea     rcx, [sym.__libc_csu_init] ; 0x15a0 ; &quot;AWAVI\x89\xd7AUATL\x8d%\xae\a &quot;
+0x000008dd      lea     rdi, [main] ; sym.main
+                                   ; 0x1343
+0x000008e4      call    qword [reloc.__libc_start_main] ; 0x201fe0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s the classical startup sequence for a Linux program.
+Look the assembly at <strong>sym.main</strong> :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>590: int main (int argc, char **argv, char **envp);
+; var int64_t var_b0h @ rbp-0xb0
+; var int64_t var_a4h @ rbp-0xa4
+; var int64_t var_9ch @ rbp-0x9c
+; var int64_t var_91h @ rbp-0x91
+; var int64_t var_90h @ rbp-0x90
+; var int64_t var_8fh @ rbp-0x8f
+; var int64_t var_8eh @ rbp-0x8e
+; var int64_t var_8dh @ rbp-0x8d
+; var int64_t var_88h @ rbp-0x88
+; var int64_t var_80h @ rbp-0x80
+; var int64_t var_7eh @ rbp-0x7e
+; var int64_t var_70h @ rbp-0x70
+; var int64_t var_50h @ rbp-0x50
+; var int64_t var_4fh @ rbp-0x4f
+; var int64_t var_4eh @ rbp-0x4e
+; var int64_t var_4dh @ rbp-0x4d
+; var int64_t var_4ch @ rbp-0x4c
+; var int64_t var_30h @ rbp-0x30
+; var int64_t var_28h @ rbp-0x28
+; var int64_t var_20h @ rbp-0x20
+; var int64_t var_18h @ rbp-0x18
+; var int64_t var_10h @ rbp-0x10
+; var int64_t var_eh @ rbp-0xe
+; var int64_t var_8h @ rbp-0x8
+; arg int argc @ rdi
+; arg char **argv @ rsi
+0x00001343      push    rbp
+0x00001344      mov     rbp, rsp
+0x00001347      sub     rsp, 0xb0
+0x0000134e      mov     dword [var_a4h], edi ; argc
+0x00001354      mov     qword [var_b0h], rsi ; argv
+0x0000135b      mov     rax, qword fs:[0x28]
+0x00001364      mov     qword [var_8h], rax
+0x00001368      xor     eax, eax
+0x0000136a      lea     rdi, str.  ; 0x17dd ; &quot;***********************&quot; ; const char *s
+0x00001371      call    sym.imp.puts ; int puts(const char *s)
+0x00001376      lea     rdi, str.rules: ; 0x17f5 ; &quot;**      rules:       **&quot; ; const char *s
+0x0000137d      call    sym.imp.puts ; int puts(const char *s)
+0x00001382      lea     rdi, str.  ; 0x17dd ; &quot;***********************&quot; ; const char *s
+0x00001389      call    sym.imp.puts ; int puts(const char *s)
+0x0000138e      mov     edi, 0xa   ; int c
+0x00001393      call    sym.imp.putchar ; int putchar(int c)
+0x00001398      lea     rdi, str.do_not_bruteforce ; 0x180d ; &quot;* do not bruteforce&quot; ; const char *s
+0x0000139f      call    sym.imp.puts ; int puts(const char *s)
+0x000013a4      lea     rdi, str.do_not_patch__find_instead_the_serial. ; 0x1828 ; &quot;* do not patch, find instead the serial.&quot; ; const char *s
+0x000013ab      call    sym.imp.puts ; int puts(const char *s)
+0x000013b0      mov     edi, 0xa   ; int c
+0x000013b5      call    sym.imp.putchar ; int putchar(int c)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, zed-zahir print the crackme banner, but later in the code some interesting stuff will be discovered.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>0x000013fc      sidt    [rbp - 0x96]
+0x00001403      movzx   eax, byte [var_91h]
+0x0000140a      cmp     al, 0xff
+0x0000140c      jne     0x1424
+0x0000140e      lea     rdi, str.VMware_detected ; 0x1851 ; &quot;VMware detected&quot; ; const char *s
+0x00001415      call    sym.imp.puts ; int puts(const char *s)
+0x0000141a      mov     edi, 1     ; int status
+0x0000141f      call    sym.imp.exit ; void exit(int status)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first one is an anti vmware by <em>sidt</em> nmemonic&#8230;&#8203; well-known unless if I mistaken <a href="#red-pill">[red-pill]</a> . Another interesting article that threat about of protection <a href="#ultimate-anti-reversing">[ultimate-anti-reversing]</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>0x0000149b      mov     esi, 0     ; pid_t pid
+0x000014a0      mov     edi, 0     ; __ptrace_request request
+0x000014a5      mov     eax, 0
+0x000014aa      call    sym.imp.ptrace ; long ptrace(__ptrace_request request, pid_t pid, void*addr, void*data)
+0x000014af      test    rax, rax
+0x000014b2      jns     0x14ca
+0x000014b4      lea     rdi, str.This_process_is_being_debugged ; 0x1878 ; &quot;This process is being debugged!!!&quot; ; const char *s
+0x000014bb      call    sym.imp.puts ; int puts(const char *s)
+0x000014c0      mov     edi, 1     ; int status
+0x000014c5      call    sym.imp.exit ; void exit(int status)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Voila, the second one detect if an debugger is attached via <strong>ptrace</strong> function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>0x00001545      lea     rdx, [var_70h]
+0x00001549      lea     rax, [var_50h]
+0x0000154d      mov     rsi, rdx   ; const char *s2
+0x00001550      mov     rdi, rax   ; const char *s1
+0x00001553      call    sym.imp.strcmp ; int strcmp(const char *s1, const char *s2)
+0x00001558      test    eax, eax
+0x0000155a      jne     0x156a
+0x0000155c      lea     rdi, str.you_succeed ; 0x189a ; &quot;you succeed!!&quot; ; const char *s
+0x00001563      call    sym.imp.puts ; int puts(const char *s)
+0x00001568      jmp     0x1576
+0x0000156a      lea     rdi, str.try_again ; 0x18a8 ; &quot;try again&quot; ; const char *s
+0x00001571      call    sym.imp.puts ; int puts(const char *s)
+0x00001576      mov     eax, 0----</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <strong>strcmp</strong> compare two values from [var_70h] and [var_50h].
+ <strong>Cutter</strong> is able to highlight the values usage. Here, click on the value [var_70h].</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/01.png" alt="01">
+</div>
+</div>
+<div class="paragraph">
+<p>[var_70h] seems used twice at 0x00001545 and 0x00001483 directly.</p>
+</div>
+<div class="paragraph">
+<p>At 0x00001483, [var_70h] moved in rax then rsi.</p>
+</div>
+<div class="paragraph">
+<p>To conclude, the <strong>strcmp</strong>
+function take the contents without alteration.
+[var_70h] is the user value.</p>
+</div>
+<div class="paragraph">
+<p>So [var_50h], by deduction is the correct value to find.</p>
+</div>
+<div class="paragraph">
+<p>I don&#8217;t want trace the code step by step.
+The first strategy will use the Cutter code emulation.
+But the quick and the good strategy will be to inspect the content of [var_70h] and [var_50h] via <strong>LD_PRELOAD</strong> tricks.</p>
+</div>
+<div class="listingblock">
+<div class="title">m.c</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="c"><span></span><span class="tok-cp">#include</span> <span class="tok-cpf">&lt;stdio.h&gt;</span><span class="tok-cp"></span>
+
+<span class="tok-kt">int</span> <span class="tok-nf">strcmp</span><span class="tok-p">(</span><span class="tok-k">const</span> <span class="tok-kt">char</span> <span class="tok-o">*</span><span class="tok-n">s</span><span class="tok-p">,</span> <span class="tok-k">const</span> <span class="tok-kt">char</span> <span class="tok-o">*</span><span class="tok-n">s2</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+	<span class="tok-n">printf</span><span class="tok-p">(</span><span class="tok-s">&quot;s1 %s</span><span class="tok-se">\n</span><span class="tok-s">s2 %s&quot;</span><span class="tok-p">,</span> <span class="tok-n">s</span><span class="tok-p">,</span> <span class="tok-n">s2</span><span class="tok-p">);</span>
+	<span class="tok-k">return</span> <span class="tok-mi">0</span><span class="tok-p">;</span>
+<span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The idea behind <strong>LD_PRELOAD</strong> tricks is hooking the real function by our library.
+<strong>strcmp</strong> hooked but before, the c code must be compiled. Here, the program is <em>m.c</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>$ gcc -shared -fPIC m.c -o m.so</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To inject m.so at the execution of ZED Crackme, type the following command :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span></span>$ <span class="tok-nv">LD_PRELOAD</span><span class="tok-o">=</span>./m.so ./ZED-Crackme-x64.bin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Enter a dummy password <strong>okokok</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code><span></span>***********************
+**      rules:       **
+***********************
+
+* do not bruteforce
+* do not patch, find instead the serial.
+
+enter the passphrase: s1 C(uiICD@CADDEBNEEDD
+s2 okokokyou succeed!!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The password printed. It&#8217;s <strong>C(uiICD@CADDEBNEEDD</strong>
+Now, you can run the program and check the flag !</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code><span></span>***********************
+**      rules:       **
+***********************
+
+* do not bruteforce
+* do not patch, find instead the serial.
+
+enter the passphrase: you succeed!!</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Great !</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_crackmes_ones_solutions">2. Crackmes.one&#8217;s solutions</h2>
+<h2 id="_references">References</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
+<div class="ulist bibliography">
+<ul class="bibliography">
 <li>
-<p><a href="crackmes.one/destructeur/ShAPK1/solution.html">Solution for destructeur’s ShAPK1</a></p>
+<p><a id="cutter"></a>[cutter] <a href="https://cutter.re" class="bare">https://cutter.re</a></p>
 </li>
 <li>
-<p><a href="crackmes.one/nutcake/WhiteRabbit/solution.html">Solution for nutcake’s WhiteRabbit</a></p>
+<p><a id="red-pill"></a>[red-pill] <a href="https://www.lions.odu.edu/~c1wang/course/cs495/lecture/10_2_Anti-VM_Techniques.pdf" class="bare">https://www.lions.odu.edu/~c1wang/course/cs495/lecture/10_2_Anti-VM_Techniques.pdf</a></p>
 </li>
 <li>
-<p><a href="crackmes.one/zed-zahir/ZED-Crackme/solution.html">Solution for zed-zahir&#8217;s ZED-Crackme</a></p>
+<p><a id="ultimate-anti-reversing"></a>[ultimate-anti-reversing] <a href="https://anti-reversing.com/Downloads/Anti-Reversing/The_Ultimate_Anti-Reversing_Reference.pdf" class="bare">https://anti-reversing.com/Downloads/Anti-Reversing/The_Ultimate_Anti-Reversing_Reference.pdf</a></p>
+</li>
+<li>
+<p><a id="upx"></a>[upx] <a href="https://upx.github.io" class="bare">https://upx.github.io</a></p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 </div>
+<style>
+pre.pygments .hll { background-color: #ffffcc }
+pre.pygments  { background: #f8f8f8; }
+pre.pygments .tok-c { color: #408080; font-style: italic } /* Comment */
+pre.pygments .tok-err { border: 1px solid #FF0000 } /* Error */
+pre.pygments .tok-k { color: #008000; font-weight: bold } /* Keyword */
+pre.pygments .tok-o { color: #666666 } /* Operator */
+pre.pygments .tok-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+pre.pygments .tok-cm { color: #408080; font-style: italic } /* Comment.Multiline */
+pre.pygments .tok-cp { color: #BC7A00 } /* Comment.Preproc */
+pre.pygments .tok-cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+pre.pygments .tok-c1 { color: #408080; font-style: italic } /* Comment.Single */
+pre.pygments .tok-cs { color: #408080; font-style: italic } /* Comment.Special */
+pre.pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
+pre.pygments .tok-ge { font-style: italic } /* Generic.Emph */
+pre.pygments .tok-gr { color: #FF0000 } /* Generic.Error */
+pre.pygments .tok-gh { color: #000080; font-weight: bold } /* Generic.Heading */
+pre.pygments .tok-gi { color: #00A000 } /* Generic.Inserted */
+pre.pygments .tok-go { color: #888888 } /* Generic.Output */
+pre.pygments .tok-gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+pre.pygments .tok-gs { font-weight: bold } /* Generic.Strong */
+pre.pygments .tok-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+pre.pygments .tok-gt { color: #0044DD } /* Generic.Traceback */
+pre.pygments .tok-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+pre.pygments .tok-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+pre.pygments .tok-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+pre.pygments .tok-kp { color: #008000 } /* Keyword.Pseudo */
+pre.pygments .tok-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+pre.pygments .tok-kt { color: #B00040 } /* Keyword.Type */
+pre.pygments .tok-m { color: #666666 } /* Literal.Number */
+pre.pygments .tok-s { color: #BA2121 } /* Literal.String */
+pre.pygments .tok-na { color: #7D9029 } /* Name.Attribute */
+pre.pygments .tok-nb { color: #008000 } /* Name.Builtin */
+pre.pygments .tok-nc { color: #0000FF; font-weight: bold } /* Name.Class */
+pre.pygments .tok-no { color: #880000 } /* Name.Constant */
+pre.pygments .tok-nd { color: #AA22FF } /* Name.Decorator */
+pre.pygments .tok-ni { color: #999999; font-weight: bold } /* Name.Entity */
+pre.pygments .tok-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+pre.pygments .tok-nf { color: #0000FF } /* Name.Function */
+pre.pygments .tok-nl { color: #A0A000 } /* Name.Label */
+pre.pygments .tok-nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+pre.pygments .tok-nt { color: #008000; font-weight: bold } /* Name.Tag */
+pre.pygments .tok-nv { color: #19177C } /* Name.Variable */
+pre.pygments .tok-ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+pre.pygments .tok-w { color: #bbbbbb } /* Text.Whitespace */
+pre.pygments .tok-mb { color: #666666 } /* Literal.Number.Bin */
+pre.pygments .tok-mf { color: #666666 } /* Literal.Number.Float */
+pre.pygments .tok-mh { color: #666666 } /* Literal.Number.Hex */
+pre.pygments .tok-mi { color: #666666 } /* Literal.Number.Integer */
+pre.pygments .tok-mo { color: #666666 } /* Literal.Number.Oct */
+pre.pygments .tok-sa { color: #BA2121 } /* Literal.String.Affix */
+pre.pygments .tok-sb { color: #BA2121 } /* Literal.String.Backtick */
+pre.pygments .tok-sc { color: #BA2121 } /* Literal.String.Char */
+pre.pygments .tok-dl { color: #BA2121 } /* Literal.String.Delimiter */
+pre.pygments .tok-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+pre.pygments .tok-s2 { color: #BA2121 } /* Literal.String.Double */
+pre.pygments .tok-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+pre.pygments .tok-sh { color: #BA2121 } /* Literal.String.Heredoc */
+pre.pygments .tok-si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+pre.pygments .tok-sx { color: #008000 } /* Literal.String.Other */
+pre.pygments .tok-sr { color: #BB6688 } /* Literal.String.Regex */
+pre.pygments .tok-s1 { color: #BA2121 } /* Literal.String.Single */
+pre.pygments .tok-ss { color: #19177C } /* Literal.String.Symbol */
+pre.pygments .tok-bp { color: #008000 } /* Name.Builtin.Pseudo */
+pre.pygments .tok-fm { color: #0000FF } /* Name.Function.Magic */
+pre.pygments .tok-vc { color: #19177C } /* Name.Variable.Class */
+pre.pygments .tok-vg { color: #19177C } /* Name.Variable.Global */
+pre.pygments .tok-vi { color: #19177C } /* Name.Variable.Instance */
+pre.pygments .tok-vm { color: #19177C } /* Name.Variable.Magic */
+pre.pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
 </body>
 </html>
