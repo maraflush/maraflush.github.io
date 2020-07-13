@@ -448,6 +448,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_analysis">1. Analysis</a></li>
+<li><a href="#_content_in_this_archive">2. Content in this archive</a></li>
+<li><a href="#_references">References</a></li>
 </ul>
 </div>
 </div>
@@ -507,123 +509,94 @@ _start endp</code></pre>
 </div>
 <div class="paragraph">
 <p>Pick the hexadecimal values of the lea : 0x48, 0x8D, 0x3D, 0x51, 0x01,
-     0x00, 0x00 .</p>
+0x00, 0x00 .</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>Often in the 64 bits programming the address are relative. To verify this argue,
-we help us of the online encoder/decoder of Jonathan Salwan's website.
-&lt;&lt;shellstorm&gt;&gt;
+<div class="paragraph">
+<p>Often in the 64 bits programming the address are relative. To verify this argue,
+we help us of the online encoder/decoder of Jonathan Salwan&#8217;s website.
+<a href="#shellstorm">[shellstorm]</a>
 Copy the previous hexadecimal values without the 0x and comma in this website,
 select x86(64) in little endian mode and click on the disassemble button. The
-result will be :
-[source,assembly]
-----
-0x0000000000000000: lea rdi, qword ptr [rip + 0x151]
-----</pre>
+result will be :</p>
 </div>
-</div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>Why it's 0x151 ? It's quite simple, look the next formula :</pre>
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>0x0000000000000000: lea rdi, qword ptr [rip + 0x151]</code></pre>
 </div>
 </div>
-<div class="literalblock">
+<div class="paragraph">
+<p>Why it&#8217;s 0x151 ? It&#8217;s quite simple, look the next formula :</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>[source,assembly]
-----
-address of the main function - address of the lea - size of the instuction of
-the lea opcode</pre>
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>address of the main function - address of the lea - size of the instuction of
+the lea opcode
+
+0x11D5 - 0x107D - 7 =&gt; 0x151</code></pre>
 </div>
 </div>
-<div class="literalblock">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+we can type this previous operation at the left of IDC at the bottom of
+IDA window, to compute the operation.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Our goal will change the value by the correct position , the position of
+secret function. The formula :</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>0x11D5 - 0x107D - 7 =&gt; 0x151
-----</pre>
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>address of the secret function - address of the lea - size of the instuction of
+the lea opcode
+
+0x1145 - 0x107D - 7 =&gt; 0xC1</code></pre>
 </div>
 </div>
-<div class="literalblock">
+<div class="paragraph">
+<p>Now, via the Jonathan&#8217;s website <a href="#shellstorm">[shellstorm]</a>, you filling out the form with :</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>TIP: we can type this previous operation at the left of IDC at the bottom of
-IDA window, to compute the operation.</pre>
+<pre class="pygments highlight"><code data-lang="assembly"><span></span>0x0000000000000000: lea rdi, qword ptr [rip + 0xc1]</code></pre>
 </div>
 </div>
-<div class="literalblock">
+<div class="paragraph">
+<p>Select x86(64) in little endian mode and click on the assemble button. The
+result will be :</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>Our goal will change the value by the correct position , the position of
-secret function. The formula :</pre>
+<pre class="pygments highlight"><code><span></span>488D3D51010000</code></pre>
 </div>
 </div>
-<div class="literalblock">
+<div class="paragraph">
+<p>Fire up a hexadecimal editor and replace the old values by the new one :</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>[source,assembly]
-----
-address of the secret function - address of the lea - size of the instuction of
-the lea opcode</pre>
+<pre class="pygments highlight"><code><span></span>48 8D 3D 51 01 00 00
+
+by
+
+48 8D 3D C1 00 00 00</code></pre>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>0x1145 - 0x107D - 7 =&gt; 0xC1
-----</pre>
+<div class="paragraph">
+<p>Now, you can run the program and grab the flag !</p>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>Now, via the Jonathan's website &lt;&lt;shellstorm&gt;&gt;, you filling out the form with :</pre>
 </div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>[source,assembly]
-----
-0x0000000000000000: lea rdi, qword ptr [rip + 0xc1]
-----</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Select x86(64) in little endian mode and click on the assemble button. The
-result will be :
-[source]
-----
-488D3D51010000
-----</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Fire up a hexadecimal editor and replace the old values by the new one :</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>[source]
-----
-48 8D 3D 51 01 00 00</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>by</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>48 8D 3D C1 00 00 00
-----</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>Now, you can run the program and grab the flag !</pre>
-</div>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>== Content in this archive</pre>
-</div>
-</div>
+<div class="sect1">
+<h2 id="_content_in_this_archive">2. Content in this archive</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
@@ -637,18 +610,21 @@ result will be :
 </li>
 <li>
 <p>solution.html  : the present file.</p>
-<div class="literalblock">
-<div class="content">
-<pre>[bibliography]
-== References</pre>
+</li>
+</ul>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
+<div class="ulist bibliography">
+<ul class="bibliography">
+<li>
+<p><a id="shellstorm"></a>[shellstorm] <a href="http://shell-storm.org/online/Online-Assembler-and-Disassembler/" class="bare">http://shell-storm.org/online/Online-Assembler-and-Disassembler/</a></p>
 </li>
 <li>
-<p>[<a id="shellstorm"></a>] <a href="http://shell-storm.org/online/Online-Assembler-and-Disassembler/" class="bare">http://shell-storm.org/online/Online-Assembler-and-Disassembler/</a></p>
-</li>
-<li>
-<p>[<a id="idafreeware"></a>] <a href="https://www.hex-rays.com/products/ida/support/download_freeware.shtml" class="bare">https://www.hex-rays.com/products/ida/support/download_freeware.shtml</a></p>
+<p><a id="idafreeware"></a>[idafreeware] <a href="https://www.hex-rays.com/products/ida/support/download_freeware.shtml" class="bare">https://www.hex-rays.com/products/ida/support/download_freeware.shtml</a></p>
 </li>
 </ul>
 </div>
