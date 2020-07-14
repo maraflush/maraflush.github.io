@@ -1,4 +1,4 @@
-= Solution for BitFriends's nasm crack
+= Solution for BitFriends' nasm crack
 mara <mara@localhost.local>
 :toc:
 :numbered:
