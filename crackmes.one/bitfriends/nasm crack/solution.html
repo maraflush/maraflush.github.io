@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
 <meta name="author" content="mara">
-<title>mara&#8217;s blog</title>
+<title>Solution for BitFriends&#8217;s nasm crack</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,7 +439,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>mara&#8217;s blog</h1>
+<h1>Solution for BitFriends&#8217;s nasm crack</h1>
 <div class="details">
 <span id="author" class="author">mara</span><br>
 <span id="email" class="email"><a href="mailto:mara@localhost.local">mara@localhost.local</a></span><br>
@@ -447,43 +447,245 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_presentation">1. Presentation</a></li>
-<li><a href="#_crackmes_ones_solutions">2. Crackmes.one&#8217;s solutions</a></li>
+<li><a href="#_analysis">1. Analysis</a></li>
+<li><a href="#_references">References</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_presentation">1. Presentation</h2>
+<h2 id="_analysis">1. Analysis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Welcome, I&#8217;m mara, during my spare time, I&#8217;m contributing to develop
-intros/demos for the Flush group.
-You can find some <a href="https://flush.team">Flush</a> information on the <a href="https://flush.team">offical website</a> or on <a href="https://demozoo.org/groups/41823/">demozoo</a> or <a href="https://www.pouet.net/groups.php?which=12080">pouet</a> and our <a href="https://www.youtube.com/channel/UCHHiTAx0hdEVxxUqJZ-3yIw">youtube channel</a></p>
+<p>The goal will find the "correct" message and it&#8217;s a 64 bits program..</p>
+</div>
+<div class="paragraph">
+<p>Take radare2  <a href="#radare2">[radare2]</a>, to analyze the binary.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+please use the git version of radare2 to be up to date
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code><span></span>$ r2 nasm_crack
+ -- git blind --hard
+[0x00401028]&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Don&#8217;t forget, use <strong>aaa</strong> option to disassemble the crackme.
+The entry point with Cutter is named by a <em>flag</em> <strong>entry0</strong></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+a flag is a litteral or a identifier in a radare jargon
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code><span></span>[0x00401028]&gt; aaa
+[x] Analyze all flags starting with sym. and entry0 (aa)
+[x] Analyze function calls (aac)
+[x] Analyze len bytes of instructions for references (aar)
+[x] Check for objc references
+[x] Check for vtables
+[x] Type matching analysis for all functions (aaft)
+[x] Propagate noreturn information
+[x] Use -AA or aaaa to perform additional experimental analysis.
+[0x00401028]&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To navigate efficiently in the code, we can use <strong>Vp</strong> command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code><span></span>[0x00401028]&gt; Vp</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+we can navigate with <strong>arrow</strong> keys or <strong>h</strong>,
+<strong>j</strong>, <strong>k</strong>, <strong>l</strong> keys like in VIM text editor.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/01.png" alt="01">
+</div>
+</div>
+<div class="paragraph">
+<p>According to <a href="#linux-x64-syscall-table">[linux-x64-syscall-table]</a>, the code between 0x401028 and
+0x401041, print the message <em>"Enter your password: ".</em></p>
+</div>
+<div class="paragraph">
+<p>Add a comment at 0x401041, by pressing <strong>;</strong> key an validate it by <strong>enter</strong>/<strong>return</strong> key.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/02.png" alt="02">
+</div>
+</div>
+<div class="paragraph">
+<p>The code between 0x401043 and 0x40105c, grab the user entry.</p>
+</div>
+<div class="paragraph">
+<p>The user entry string will be a length of 16 characters.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/03.png" alt="03">
+</div>
+</div>
+<div class="paragraph">
+<p>The code between 0x40105e and 0x401077 compare the content of
+address pointed by rsi and rdi until ecx will be equals to zero or
+a characters is different during the loop iteration.
+If all characters are equals the je nmemonic at 0x401079 will be
+taken.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/04.png" alt="04">
+</div>
+</div>
+<div class="paragraph">
+<p>To jump, on this line, press <strong>enter</strong>/<strong>return</strong> key to jump at loc.correct_fun</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/05.png" alt="05">
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+to return before the jump press the <strong>u</strong> key.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Great, if so the answer is the value pointed by rdi, so <strong>loc.passwd</strong>.</p>
+</div>
+<div class="paragraph">
+<p>The right value is <strong>supersecret</strong>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_crackmes_ones_solutions">2. Crackmes.one&#8217;s solutions</h2>
+<h2 id="_references">References</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
+<div class="ulist bibliography">
+<ul class="bibliography">
 <li>
-<p><a href="crackmes.one/destructeur/ShAPK1/solution.html">Solution for destructeur’s ShAPK1</a></p>
+<p><a id="linux-x64-syscall-table"></a>[linux-x64-syscall-table] <a href="https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/" class="bare">https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/</a></p>
 </li>
 <li>
-<p><a href="crackmes.one/nutcake/WhiteRabbit/solution.html">Solution for nutcake’s WhiteRabbit</a></p>
-</li>
-<li>
-<p><a href="crackmes.one/zed-zahir/ZED-Crackme/solution.html">Solution for zed-zahir&#8217;s ZED-Crackme</a></p>
-</li>
-<li>
-<p><a href="crackmes.one/bitfriends/nasm%20crack/solution.html">Solution for BitFriends&#8217;s nasm crack</a></p>
+<p><a id="radare2"></a>[radare2] <a href="https://https://rada.re" class="bare">https://https://rada.re</a></p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 </div>
+<style>
+pre.pygments .hll { background-color: #ffffcc }
+pre.pygments  { background: #f8f8f8; }
+pre.pygments .tok-c { color: #408080; font-style: italic } /* Comment */
+pre.pygments .tok-err { border: 1px solid #FF0000 } /* Error */
+pre.pygments .tok-k { color: #008000; font-weight: bold } /* Keyword */
+pre.pygments .tok-o { color: #666666 } /* Operator */
+pre.pygments .tok-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+pre.pygments .tok-cm { color: #408080; font-style: italic } /* Comment.Multiline */
+pre.pygments .tok-cp { color: #BC7A00 } /* Comment.Preproc */
+pre.pygments .tok-cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+pre.pygments .tok-c1 { color: #408080; font-style: italic } /* Comment.Single */
+pre.pygments .tok-cs { color: #408080; font-style: italic } /* Comment.Special */
+pre.pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
+pre.pygments .tok-ge { font-style: italic } /* Generic.Emph */
+pre.pygments .tok-gr { color: #FF0000 } /* Generic.Error */
+pre.pygments .tok-gh { color: #000080; font-weight: bold } /* Generic.Heading */
+pre.pygments .tok-gi { color: #00A000 } /* Generic.Inserted */
+pre.pygments .tok-go { color: #888888 } /* Generic.Output */
+pre.pygments .tok-gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+pre.pygments .tok-gs { font-weight: bold } /* Generic.Strong */
+pre.pygments .tok-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+pre.pygments .tok-gt { color: #0044DD } /* Generic.Traceback */
+pre.pygments .tok-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+pre.pygments .tok-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+pre.pygments .tok-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+pre.pygments .tok-kp { color: #008000 } /* Keyword.Pseudo */
+pre.pygments .tok-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+pre.pygments .tok-kt { color: #B00040 } /* Keyword.Type */
+pre.pygments .tok-m { color: #666666 } /* Literal.Number */
+pre.pygments .tok-s { color: #BA2121 } /* Literal.String */
+pre.pygments .tok-na { color: #7D9029 } /* Name.Attribute */
+pre.pygments .tok-nb { color: #008000 } /* Name.Builtin */
+pre.pygments .tok-nc { color: #0000FF; font-weight: bold } /* Name.Class */
+pre.pygments .tok-no { color: #880000 } /* Name.Constant */
+pre.pygments .tok-nd { color: #AA22FF } /* Name.Decorator */
+pre.pygments .tok-ni { color: #999999; font-weight: bold } /* Name.Entity */
+pre.pygments .tok-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+pre.pygments .tok-nf { color: #0000FF } /* Name.Function */
+pre.pygments .tok-nl { color: #A0A000 } /* Name.Label */
+pre.pygments .tok-nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+pre.pygments .tok-nt { color: #008000; font-weight: bold } /* Name.Tag */
+pre.pygments .tok-nv { color: #19177C } /* Name.Variable */
+pre.pygments .tok-ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+pre.pygments .tok-w { color: #bbbbbb } /* Text.Whitespace */
+pre.pygments .tok-mb { color: #666666 } /* Literal.Number.Bin */
+pre.pygments .tok-mf { color: #666666 } /* Literal.Number.Float */
+pre.pygments .tok-mh { color: #666666 } /* Literal.Number.Hex */
+pre.pygments .tok-mi { color: #666666 } /* Literal.Number.Integer */
+pre.pygments .tok-mo { color: #666666 } /* Literal.Number.Oct */
+pre.pygments .tok-sa { color: #BA2121 } /* Literal.String.Affix */
+pre.pygments .tok-sb { color: #BA2121 } /* Literal.String.Backtick */
+pre.pygments .tok-sc { color: #BA2121 } /* Literal.String.Char */
+pre.pygments .tok-dl { color: #BA2121 } /* Literal.String.Delimiter */
+pre.pygments .tok-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+pre.pygments .tok-s2 { color: #BA2121 } /* Literal.String.Double */
+pre.pygments .tok-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+pre.pygments .tok-sh { color: #BA2121 } /* Literal.String.Heredoc */
+pre.pygments .tok-si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+pre.pygments .tok-sx { color: #008000 } /* Literal.String.Other */
+pre.pygments .tok-sr { color: #BB6688 } /* Literal.String.Regex */
+pre.pygments .tok-s1 { color: #BA2121 } /* Literal.String.Single */
+pre.pygments .tok-ss { color: #19177C } /* Literal.String.Symbol */
+pre.pygments .tok-bp { color: #008000 } /* Name.Builtin.Pseudo */
+pre.pygments .tok-fm { color: #0000FF } /* Name.Function.Magic */
+pre.pygments .tok-vc { color: #19177C } /* Name.Variable.Class */
+pre.pygments .tok-vg { color: #19177C } /* Name.Variable.Global */
+pre.pygments .tok-vi { color: #19177C } /* Name.Variable.Instance */
+pre.pygments .tok-vm { color: #19177C } /* Name.Variable.Magic */
+pre.pygments .tok-il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
 </body>
 </html>
