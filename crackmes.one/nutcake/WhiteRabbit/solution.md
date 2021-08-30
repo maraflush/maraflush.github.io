@@ -21,7 +21,7 @@ The first idea will be to patch the EntryPoint but the program will crashed.
 Another option will to patch the instruction lea rdi, main to lea rdi, secret in
 the `_start` function.
 
-> WARNING: Beware the nmemonic is position relative.
+> **WARNING:** Beware the nmemonic is position relative.
 
 ```assembly
 public _start
@@ -57,14 +57,14 @@ result will be :
 
 Why it's 0x151 ? It's quite simple, look the next formula :
 
-``assembly
+```assembly
 address of the main function - address of the lea - size of the instuction of
 the lea opcode
 
 0x11D5 - 0x107D - 7 => 0x151
 ```
 
-> TIP: we can type this previous operation at the left of IDC at the bottom of
+> **TIP:** we can type this previous operation at the left of IDC at the bottom of
 IDA window, to compute the operation.
 
 
