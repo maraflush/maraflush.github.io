@@ -44,7 +44,7 @@ To navigate efficiently in the code, we can use `Vp` command.
 
 ![](images/01.png)
 
-According to linux-x64-syscall-table[^2]], the code between 0x401028 and
+According to linux-x64-syscall-table[^2], the code between 0x401028 and
 0x401041, print the message _"Enter your password: "._
 
 Add a comment at 0x401041, by pressing `;` key an validate it by `enter`/`return` key.
