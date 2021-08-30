@@ -137,7 +137,7 @@ Voila, the second one detect if an debugger is attached via `ptrace` function.
 0x00001568      jmp     0x1576
 0x0000156a      lea     rdi, str.try_again ; 0x18a8 ; "try again" ; const char *s
 0x00001571      call    sym.imp.puts ; int puts(const char *s)
-0x00001576      mov     eax, 0----
+0x00001576      mov     eax, 0
 ```
 
 The `strcmp` compare two values from [var_70h] and [var_50h].
