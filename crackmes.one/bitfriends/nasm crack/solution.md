@@ -39,7 +39,7 @@ To navigate efficiently in the code, we can use `Vp` command.
 [0x00401028]> Vp
 ```
 
-> TIP:  we can navigate with `arrow` keys or `h`,
+> **TIP:**  we can navigate with `arrow` keys or `h`,
 `j`, `k`, `l` keys like in VIM text editor.
 
 ![](images/01.png)
@@ -69,7 +69,7 @@ To jump, on this line, press `enter`/`return` key to jump at loc.correct_fun
 
 ![](images/05.png)
 
-> TIP: to return before the jump press the `u` key.
+> **TIP:** to return before the jump press the `u` key.
 
 Great, if so the answer is the value pointed by rdi, so `loc.passwd`.
 

@@ -75,7 +75,7 @@ It's value is :
 
 The `encrypt` function xored each characters of `bArr` with `bArr2` for each iterations.
 
-> WARNING: the `bArr2` can be short than `bArr` so a modulo with the key length (`bArr2`)  is applied to avoid the bound array overflow
+> **WARNING:** the `bArr2` can be short than `bArr` so a modulo with the key length (`bArr2`)  is applied to avoid the bound array overflow
 
 ## Keygen
 
