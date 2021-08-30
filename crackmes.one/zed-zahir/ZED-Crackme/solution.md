@@ -1,29 +1,24 @@
-= Solution for zed-zahir's ZED-Crackme
+# Solution for zed-zahir's ZED-Crackme
 mara <mara@localhost.local>
-:toc:
-:numbered:
-:nofooter:
-:source-highlighter: pygments
 
-== Analysis
+## Analysis
 
-Before all, unpack the binary via *<<upx>>*.
+Before all, unpack the binary via `upx`[^1].
 
-[[source]]
-----
+```bash
 $ upx -d ZED-Crackme-x64.bin
-----
+```
+
 The goal will find the good serial.
 
-Take Cutter <<cutter>>, to analyze the binary.
+Take Cutter[^2], to analyze the binary.
 
-Don't forget, use *aaa* option to disassemble the crackme.
-The entry point with Cutter is named by a _flag_ *entry0*
+Don't forget, use `aaa` option to disassemble the crackme.
+The entry point with Cutter is named by a _flag_ `entry0`
 
-NOTE: a flag is a litteral or a identifier in a Cutter jargon
+> **NOTE:** a flag is a litteral or a identifier in a Cutter jargon
 
-[source,assembly]
-----
+```assembly
   ;-- section..text:
   ;-- .text:
   ;-- _start:
@@ -41,14 +36,13 @@ NOTE: a flag is a litteral or a identifier in a Cutter jargon
 0x000008dd      lea     rdi, [main] ; sym.main
                                    ; 0x1343
 0x000008e4      call    qword [reloc.__libc_start_main] ; 0x201fe0
-----
+```
 
 It's the classical startup sequence for a Linux program.
-Look the assembly at *sym.main* :
+Look the assembly at `sym.main` :
 
-[source,assembly]
-----
-590: int main (int argc, char **argv, char **envp);
+```assembly
+int main (int argc, char **argv, char **envp);
 ; var int64_t var_b0h @ rbp-0xb0
 ; var int64_t var_a4h @ rbp-0xa4
 ; var int64_t var_9ch @ rbp-0x9c
@@ -97,12 +91,11 @@ Look the assembly at *sym.main* :
 0x000013ab      call    sym.imp.puts ; int puts(const char *s)
 0x000013b0      mov     edi, 0xa   ; int c
 0x000013b5      call    sym.imp.putchar ; int putchar(int c)
-----
+```
 
 Here, zed-zahir print the crackme banner, but later in the code some interesting stuff will be discovered.
 
-[source,assembly]
-----
+```assembly
 0x000013fc      sidt    [rbp - 0x96]
 0x00001403      movzx   eax, byte [var_91h]
 0x0000140a      cmp     al, 0xff
@@ -111,12 +104,11 @@ Here, zed-zahir print the crackme banner, but later in the code some interesting
 0x00001415      call    sym.imp.puts ; int puts(const char *s)
 0x0000141a      mov     edi, 1     ; int status
 0x0000141f      call    sym.imp.exit ; void exit(int status)
-----
+```
 
-The first one is an anti vmware by _sidt_ nmemonic... well-known unless if I mistaken <<red-pill>> . Another interesting article that threat about of protection <<ultimate-anti-reversing>>.
+The first one is an anti vmware by `sidt` nmemonic... well-known unless if I mistaken red-pill[^3] . Another interesting article that threat about of protection ultimate-anti-reversing[^4].
 
-[source,assembly]
-----
+```assembly
 0x0000149b      mov     esi, 0     ; pid_t pid
 0x000014a0      mov     edi, 0     ; __ptrace_request request
 0x000014a5      mov     eax, 0
@@ -127,13 +119,12 @@ The first one is an anti vmware by _sidt_ nmemonic... well-known unless if I mis
 0x000014bb      call    sym.imp.puts ; int puts(const char *s)
 0x000014c0      mov     edi, 1     ; int status
 0x000014c5      call    sym.imp.exit ; void exit(int status)
-----
+```
 
-Voila, the second one detect if an debugger is attached via *ptrace* function.
+Voila, the second one detect if an debugger is attached via `ptrace` function.
 
 
-[source,assembly]
-----
+```assembly
 0x00001545      lea     rdx, [var_70h]
 0x00001549      lea     rax, [var_50h]
 0x0000154d      mov     rsi, rdx   ; const char *s2
@@ -147,18 +138,18 @@ Voila, the second one detect if an debugger is attached via *ptrace* function.
 0x0000156a      lea     rdi, str.try_again ; 0x18a8 ; "try again" ; const char *s
 0x00001571      call    sym.imp.puts ; int puts(const char *s)
 0x00001576      mov     eax, 0----
-----
+```
 
-The *strcmp* compare two values from [var_70h] and [var_50h].
- *Cutter* is able to highlight the values usage. Here, click on the value [var_70h].
+The `strcmp` compare two values from [var_70h] and [var_50h].
+ `Cutter` is able to highlight the values usage. Here, click on the value [var_70h].
  
-image::images/01.png[]
+![](images/01.png)
 
 [var_70h] seems used twice at 0x00001545 and 0x00001483 directly.
 
 At 0x00001483, [var_70h] moved in rax then rsi.
 
-To conclude, the *strcmp*
+To conclude, the `strcmp`
 function take the contents without alteration.
 [var_70h] is the user value.
 
@@ -168,49 +159,57 @@ I don't want trace the code step by step.
 The first strategy will use the Cutter code emulation.
 But the quick and the good strategy will be to inspect the content of [var_70h] and [var_50h] via *LD_PRELOAD* tricks.
 
-[source,c]
-.m.c
-----
-include::m.c[]
-----
+```c
+int strcmp(const char *s, const char *s2) {
+	printf("s1 %s\ns2 %s", s, s2);
+	return 0;
+}
+```
 
 The idea behind *LD_PRELOAD* tricks is hooking the real function by our library.
-*strcmp* hooked but before, the c code must be compiled. Here, the program is _m.c_
+`strcmp` hooked but before, the c code must be compiled. Here, the program is `m.c`
 
-[source,bash]
-----
+```bash
 $ gcc -shared -fPIC m.c -o m.so
-----
+```
 
 To inject m.so at the execution of ZED Crackme, type the following command :
 
-[source,bash]
-----
+```bash
 $ LD_PRELOAD=./m.so ./ZED-Crackme-x64.bin
-----
+```
 
 Enter a dummy password *okokok*.
 
-[source]
-----
-include::lala.txt[]
-----
+```
+***********************
+**      rules:       **
+***********************
+
+* do not bruteforce
+* do not patch, find instead the serial.
+
+enter the passphrase: s1 C(uiICD@CADDEBNEEDD
+s2 okokokyou succeed!!
+```
 
 The password printed. It's *C(uiICD@CADDEBNEEDD*
 Now, you can run the program and check the flag !
 
-[source]
-----
-include::02_cool.txt[]
-----
+```
+***********************
+**      rules:       **
+***********************
 
+* do not bruteforce
+* do not patch, find instead the serial.
+
+enter the passphrase: you succeed!!
+```
 Great !
 
 
-[bibliography]
-== References
-
-- [[[cutter]]] https://cutter.re
-- [[[red-pill]]] https://www.lions.odu.edu/~c1wang/course/cs495/lecture/10_2_Anti-VM_Techniques.pdf
-- [[[ultimate-anti-reversing]]] https://anti-reversing.com/Downloads/Anti-Reversing/The_Ultimate_Anti-Reversing_Reference.pdf
-- [[[upx]]] https://upx.github.io
+[^4]: https://anti-reversing.com/Downloads/Anti-Reversing/The_Ultimate_Anti-Reversing_Reference.pdf
+[^3]: https://www.lions.odu.edu/~c1wang/course/cs495/lecture/10_2_Anti-VM_Techniques.pdf
+[^2]: https://cutter.re
+[^1]: https://upx.github.io
