@@ -78,6 +78,8 @@ The right value is *supersecret*.
 
 
 
-[^2]: https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
 
 [^1]: https://rada.re
+
+[^2]: https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
+

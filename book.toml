@@ -1,0 +1,6 @@
+[book]
+authors = ["mara"]
+language = "en"
+multilingual = false
+src = "src"
+title = "mara's blog"

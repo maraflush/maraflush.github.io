@@ -209,7 +209,12 @@ enter the passphrase: you succeed!!
 Great !
 
 
-[^4]: https://anti-reversing.com/Downloads/Anti-Reversing/The_Ultimate_Anti-Reversing_Reference.pdf
-[^3]: https://www.lions.odu.edu/~c1wang/course/cs495/lecture/10_2_Anti-VM_Techniques.pdf
-[^2]: https://cutter.re
+
+
 [^1]: https://upx.github.io
+
+[^2]: https://cutter.re
+
+[^3]: https://www.lions.odu.edu/~c1wang/course/cs495/lecture/10_2_Anti-VM_Techniques.pdf
+
+[^4]: https://anti-reversing.com/Downloads/Anti-Reversing/The_Ultimate_Anti-Reversing_Reference.pdf
